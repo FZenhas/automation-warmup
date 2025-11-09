@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import test, { expect } from "@playwright/test";
 
 export class FormPage {
   constructor(page) {
@@ -18,41 +18,70 @@ export class FormPage {
   }
 
   async navigateToForm() {
+    await test.step("Go to form", async () => {
     await this.page.goto("/form");
+    });
   }
 
   async fillName(userName) {
-    await this.nameInput.fill(userName);
+    await test.step("Name field", async () => {
+      await this.nameInput.fill(userName);
+    });
   }
 
   async fillEmail(userEmail) {
-    await this.emailInput.fill(userEmail);
+    await test.step("Email field", async () => {
+      await this.emailInput.fill(userEmail);
+    });
   }
 
   async fillPassword(userPassword) {
-    await this.passwordInput.fill(userPassword);
+    await test.step("Password field", async () => {
+      await this.passwordInput.fill(userPassword);
+    });
   }
 
   async selectCountry(userCountry) {
-    await this.countrySelect.selectOption(userCountry);
-  }
-
-  async selectHobbies(userHobbies) {
-    for (const hobby of userHobbies) {
-      await this.page.getByRole("checkbox", { name: hobby }).check();
-    }
+    await test.step("Country field", async () => {
+      await this.countrySelect.selectOption(userCountry);
+    });
   }
 
   async selectGender(userGender) {
-    await this.genderRadio(userGender).check();
+    await test.step("Gender field", async () => {
+      await this.genderRadio(userGender).check();
+    });
+  }
+
+  async selectHobbies(userHobbies) {
+    await test.step("Hobbies field", async () => {
+      for (const hobby of userHobbies) {
+        await this.page.getByRole("checkbox", { name: hobby }).check();
+      }
+    });
   }
 
   async submitForm() {
-    await this.sendButton.click();
+    await test.step("Submit form", async () => {
+      await this.sendButton.click();
+    });
   }
 
   async validateSuccess() {
-    await expect(this.successTitle).toBeVisible();
-    await expect(this.successBody).toBeVisible();
+    await test.step("Form submitted message", async () => {
+      await expect(this.successTitle).toBeVisible();
+      await expect(this.successBody).toBeVisible();
+    });
+  }
+
+  async validateRequiredFields(fields) {
+     await test.step("Validate form required fields", async () => {
+      await expect(this.page.getByText(fields.name)).toBeVisible();
+      await expect(this.page.getByText(fields.email)).toBeVisible();
+      await expect(this.page.getByText(fields.password)).toBeVisible();
+      await expect(this.page.getByText(fields.country)).toBeVisible();
+      await expect(this.page.getByText(fields.gender)).toBeVisible();
+    });
   }
 }
+
